@@ -24,33 +24,46 @@
 1. **Khảo sát cấu trúc TUI hiện tại**
    - Đọc code rendering và data model: xem cách hiển thị VM/docker/container.
    - Xác định nơi xây dựng danh sách hiển thị và nơi xử lý phím tắt.
+   - Ghi chú các struct/type hiện có và luồng cập nhật state khi nhận input.
 
 2. **Thiết kế lại model dữ liệu dạng cây**
-   - Tạo tree model: VM node → Docker host node → Container node.
+   - Tạo tree model: `VM node → Docker host node → Container node`.
    - Thêm state `expanded/collapsed` ở node group.
+   - Đề xuất struct (ví dụ): `Node { id, kind, label, children, expanded, selected }`.
+   - Lưu mapping từ node → dữ liệu backend (vmID, dockerID, containerID).
 
 3. **Cập nhật UI render**
    - Render theo tree với indent/marker.
    - Cho phép toggle collapse/expand bằng phím tắt (ví dụ Enter/Space).
+   - Tùy chọn icon/marker: `▸/▾` cho collapsed/expanded.
+   - Với multi-select: hiển thị prefix `[x]/[ ]` để biểu thị chọn.
 
 4. **Context actions theo node type**
    - VM node: menu action (control docker / bash).
    - Docker group: bulk start/stop.
    - Container: start/stop/restart/down.
    - Hỗ trợ multi-select cho container nodes.
+   - Gợi ý luồng: nhấn `a` để mở action menu theo node type.
+   - Gắn handler theo node kind (VM/DockerGroup/Container).
+   - Với multi-select: áp action lên danh sách node đã chọn.
 
 5. **Cải thiện hành vi vào shell**
    - Đổi flow: mở shell ở chế độ “subscreen” và có phím tắt thoát.
    - Hoặc xử lý Ctrl+C để quay lại TUI thay vì exit.
+   - Ưu tiên mở `exec.Command` vào PTY và gắn keybinding `Ctrl+Q`/`Esc` để return.
+   - Cần đảm bảo cleanup session khi thoát (đóng PTY, stop goroutine đọc output).
 
 6. **Thêm search mode**
    - Implement command palette kiểu Vim: nhấn `:` để vào command mode.
    - Parse lệnh dạng `q <keyword>` hoặc `:q keyword`.
    - `Esc` thoát search mode.
+   - Khi search: lọc tree nodes theo label (case-insensitive) và highlight kết quả.
+   - Khi thoát search: restore full tree và vị trí focus ban đầu.
 
 7. **Kiểm thử UI/UX**
    - Test với VM có nhiều docker/containers.
    - Test collapse/expand, multi-select, search, shell exit.
+   - Kiểm tra thao tác bulk start/stop trên nhiều container đã chọn.
 
 ---
 
