@@ -1,0 +1,20 @@
+{
+    "vms": [
+        {
+            "id": "vm-1",
+            "name": "Development Server",
+            "host": "192.168.1.231",
+            "port": 22,
+            "user": "root",
+            "password": "test00"
+        },
+        {
+            "id": "vm-2",
+            "name": "Staging Server",
+            "host": "192.168.1.244",
+            "port": 22,
+            "user": "root",
+            "password": "Cx@832WP7C"
+        }
+    ]
+}
